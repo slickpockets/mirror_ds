@@ -1,0 +1,28 @@
+#!/dis/sh.dis -n
+# generate a suitable kfs(4) filesystem from proto
+# uses fs(1) to filter out .svn dirs in $kfs,
+# see lab-74-effective-inferno from Caerwyn's IPN
+load std
+
+fn usage{
+	echo 'usage: mkkfs proto file.kfs'
+	raise $*
+}
+
+if{~ $#* 0 1}{
+	usage
+}
+if{! ftest -r $1}{
+	usage 'no proto file'
+}
+if{no $2}{
+	usage 'no file.kfs'
+}
+
+proto=$1
+kfs=$2
+
+zeros 1024 32768 > $kfs
+mount -c {disk/kfs -r $kfs} /n/kfs
+fs write /n/kfs '{filter {not {match .svn}} {proto '^$proto^'}}'
+unmount /n/kfs

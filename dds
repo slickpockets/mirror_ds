@@ -1,0 +1,174 @@
+# dds: disk with all files in sd/tf card
+dev
+	root
+	cons archds lcd
+	env
+	mnt
+	pipe
+	prog
+	rtc
+	srv
+	dup
+	draw screen swcursor
+	pointer
+	ip	bootp ip ipv6 ipaux iproute arp netlog ptclbsum iprouter plan9 nullmedium pktmedium
+	ether netif netaux
+
+	nds
+	dldi
+	audio
+#	boot
+#	kprof
+#	tinyfs
+
+ip
+#	il
+	tcp
+	udp
+#	rudp
+#	igmp
+	ipifc
+	icmp
+	icmp6
+#	ipmux
+
+lib
+	interp
+	tk
+	draw
+	memlayer
+	memdraw
+	keyring
+	sec
+	mp
+	math
+	kern
+
+mod
+	math
+	sys
+	draw
+	tk
+	keyring
+
+port
+	alarm
+	alloc
+	allocb
+	chan
+	dev
+	dial
+	dis
+	discall
+	exception
+	exportfs
+	inferno
+	latin1
+	nocache
+	nodynld
+	parse
+	pgrp
+	print
+	proc
+	qio
+	qlock
+	random
+	sysfile
+	taslock
+	xalloc
+
+link
+	fifo
+#	math
+#	logo
+	ethernds
+	ethermedium
+#	ethermii
+#	pppmedium ppp compress
+
+#	iottds
+#	iogmtf
+	iompcf
+	ior4tf iocard
+
+misc
+
+code
+	int main_pool_pcnt = 60;
+	int heap_pool_pcnt = 30;
+	int image_pool_pcnt = 10;
+	int cflag = 0;
+
+	int consoleprint = 1;
+	int redirectconsole = 1;
+	int iprintscreenputs = 0;
+	char debug_keys = 1;
+	int panicreset = 0;
+	char *tkfont = "/fonts/lucidasans/unicode.6.font";
+	int	tkstylus = 1;
+
+	
+init
+	dsinit
+
+root
+	/chan	/
+	/dev	/
+	/dis
+	/env	/
+	/fd	/
+	/net	/
+	/net.alt	/
+	/nvfs /
+	/prog	/
+	/osinit.dis
+
+# intialisation
+# dos file system
+	/dis/dossrv.dis
+#	/dis/disk/format.dis
+
+# kfs file system
+	/dis/disk/kfs.dis
+#	/dis/disk/kfscmd.dis
+
+# used by file systems and commands
+	/dis/lib/arg.dis
+	/dis/lib/styx.dis
+	/dis/lib/string.dis
+	/dis/lib/daytime.dis
+
+# For development work:
+#	/dis/sh.dis	/dis/tiny/sh.dis
+#	/dis/ls.dis
+#	/dis/cat.dis
+#	/dis/bind.dis
+#	/dis/mount.dis
+#	/dis/pwd.dis
+#	/dis/echo.dis
+#	/dis/cd.dis
+#	/dis/xd.dis
+#	/dis/cp.dis
+#	/dis/mkdir.dis
+#	/dis/rm.dis	/dis/tiny/rm.dis
+#	/dis/p.dis
+#	/dis/ps.dis
+
+	/dis/lib/readdir.dis
+	/dis/lib/workdir.dis
+	/dis/lib/env.dis
+	/dis/lib/bufio.dis
+#	/dis/lib/auth.dis
+#	/dis/lib/ssl.dis
+
+# dhcp
+	/dis/lib/dhcpclient.dis
+	/dis/lib/ip.dis
+
+	/n/remote
+	/n/local
+	/n/client
+	/n/rdbg
+	/n/dump
+	/n/disk
+	/n/kfs

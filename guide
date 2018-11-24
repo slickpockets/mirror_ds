@@ -1,0 +1,41 @@
+git format-patch HEAD^
+git am -k -3 *.patch
+git archive --prefix=ds/ HEAD > ds.tar
+git checkout
+
+# i from http://inferno-lab.googlecode.com/svn/trunk/81/i
+cp dsinit.b ../init
+i mk 'CONF=sds' vclean
+i mk 'CONF=sds' syms
+i mk 'CONF=sds'
+i inm isds
+
+u mount /mnt/usb
+cp i*ds.nds /mnt/usb; sync
+u umount /mnt/usb
+
+desmume isds.nds
+wine $home/nogba-2.6a/'NO$GBA.EXE' isds.nds
+
+echo 'dsmap9(); asm(main); // dump(ktzero, etext-ktzero, "i")' | i acid -l acidmap isds
+echo 'dsmap7(); asm(main); // dump(ktzero, etext-ktzero, "i")' | i acid -l acidmap arm7/isds
+
+i emu disdep /os/init/dsinit.dis | sort |t+
+
+# ndstool usage
+ndstool -c rom.nds -9 9.bin -7 7.bin -y9 y9.bin -y7 y7.bin -d d -y o -t b.bin -h h.bin # create
+ndstool -x rom.nds -9 9.bin -7 7.bin -y9 y9.bin -y7 y7.bin -d d -y o -t b.bin -h h.bin # extract
+
+# desmume cflash usage
+dd if=/dev/zero of=cfdisk.img bs=1048576 count=64
+mkdosfs -F16 cfdisk.img
+mount cfdisk.img cfdisk/ -o loop,uid=$USER -t vfat
+umount cfdisk/
+
+i mk CONF=dds
+dlditool root/misc/Mpcf.dldi idds.nds 
+desmume --cflash=idds.kfs idds.nds
+desmume '--cflash=cfdisk.img'  idds.nds
+arm-objdump -D -m arm -b binary root/misc/Mpcf.dldi
+	
+xd isds.nds  | grep -i eda58dbf | awk '{hdr=strtonum("0x" $1); printf("/* TODO: fix DLDIhdr start %#0.8x */\n", hdr+64)}'

@@ -1,0 +1,32 @@
+
+(
+echo ';no$gba symbolic information file'
+echo 
+echo '00000000  0'
+echo '00000000  .arm'
+
+inm -n $* | sed 's|.*: ||' | sort -f -k 2 | awk \
+'
+	function zeropad(a, z) { 
+		for (i = z - length(a); i > 0; i--)
+			a = "0" a
+		return a
+	}
+	{
+		addr=zeropad($1,8)
+		sym=$3
+
+		if (match($2, "[tTlL]"))
+			sect=".text"
+		else if (match($2, "[dD]"))
+			sect=".data?"
+		else if (match($2, "[bB]"))
+			sect=".bss"
+
+		if (sect != osect)
+			printf ("\n%s  %s\n", addr, sect)
+		osect=sect
+		printf ("%s  %s\n", addr, sym)
+	}
+'
+)
